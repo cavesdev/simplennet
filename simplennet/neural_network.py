@@ -3,9 +3,9 @@ import numpy as np
 
 class NeuralNetwork():
     def __init__(self, ):
-        self.inputSize = 3
+        self.inputSize = 10
         self.outputSize = 1
-        self.hiddenSize = 3
+        self.hiddenSize = 5
 
         self.W1 = np.random.rand(self.inputSize, self.hiddenSize)
         self.W2 = np.random.rand(self.hiddenSize, self.outputSize)
@@ -52,6 +52,7 @@ class NeuralNetwork():
         plt.title('Mean Sum Squared Loss')
         plt.xlabel('Epoch')
         plt.ylabel('Loss')
+        plt.show()
 
     def test_evaluation(self, input_test, output_test):
         for i, test_element in enumerate(input_test):
