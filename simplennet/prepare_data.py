@@ -4,17 +4,32 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-output_column = "WorkLifeBalance"
-columns = ["WorkLifeBalance", "Department", "Gender","JobLevel", "JobRole", "JobSatisfaction", "MonthlyIncome", 
+OUTPUT_COLUMN = "WorkLifeBalance"
+COLUMNS = ["WorkLifeBalance", "Department", "Gender", "JobLevel", "JobRole", "JobSatisfaction", "MonthlyIncome",
            "OverTime", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion"]
-data = pd.read_csv('data.csv', usecols=columns)
+data = pd.read_csv('data.csv', usecols=COLUMNS)
 columns_in_order = data.columns.values
 
 print('Discretizar valores de output a 0 - 1...')
-data[output_column] = pd.cut(data[output_column], bins=2, labels=False)
+data[OUTPUT_COLUMN] = pd.cut(data[OUTPUT_COLUMN], bins=2, labels=False)
 
-data[output_column].value_counts().plot(kind='bar', title="WorkLifeBalance counts")
+data[OUTPUT_COLUMN].value_counts().plot(kind='bar', title="WorkLifeBalance counts")
 plt.show()
+
+print('Undersampling para balancear los outputs...')
+count_class_0, count_class_1 = data[OUTPUT_COLUMN].value_counts(sort=False)
+classes = data[OUTPUT_COLUMN].unique()
+
+df_class_0 = data[data[OUTPUT_COLUMN] == classes[0]]
+df_class_1 = data[data[OUTPUT_COLUMN] == classes[1]]
+
+df_class_1_under = df_class_1.sample(count_class_0)
+df_test_under = pd.concat([df_class_1_under, df_class_0], axis=0)
+
+df_test_under[OUTPUT_COLUMN].value_counts().plot(kind='bar', title='Count (target)');
+plt.show()
+
+data = df_test_under
 
 print('Convertir los strings a valores numéricos...')
 for column in data.columns:
@@ -27,38 +42,35 @@ data_scaled = StandardScaler().fit_transform(data)
 
 df = pd.DataFrame(data_scaled, columns=columns_in_order)
 
-print(df[output_column])
-
-x_train, x_test, y_train, y_test = train_test_split(
-    df.drop(output_column, axis=1),
-    df[output_column],
+print('Dividir dataset en train, validation, test...')
+x_train, x, y_train, y = train_test_split(
+    df.drop(OUTPUT_COLUMN, axis=1),
+    df[OUTPUT_COLUMN],
     test_size=0.2,
     random_state=10,
-    stratify=df[output_column]
+    stratify=df[OUTPUT_COLUMN]
 )
 
-print(x_train.vallues)
-print(y_train.value_counts())
+x_test, x_cv, y_test, y_cv = train_test_split(
+    x,
+    y,
+    test_size=0.5,
+    random_state=10,
+    stratify=y
+)
 
+# TODO: remove
+print(x_test.values.shape)
+print(y_test.values.shape)
 
 # output = np.array([[x] for x in df.loc[:,output_column].to_list()])
 # df = df.drop(output_column, axis=1)
 # columns_in_order = np.delete(columns_in_order, np.where(columns_in_order == output_column))
 # input = df[columns_in_order].values
 
-# print(input.shape)
-# print(input)
-# print(output.shape)
-# print(output)
-
-# scaler = MinMaxScaler()
-# input_train_scaled = scaler.fit_transform(input_train)
-# output_train_scaled = scaler.fit_transform(output_train)
-# input_test_scaled = scaler.fit_transform(input_test)
-# output_test_scaled = scaler.fit_transform(output_test)
-
-# np.save('data/input_train_scaled.npy', input_train_scaled)
-# np.save('data/output_train_scaled.npy', output_train_scaled)
-# np.save('data/input_test_scaled.npy', input_test_scaled)
-# np.save('data/output_test_scaled.npy', output_test_scaled)
-# np.save('data/input_pred.npy', input_pred)
+np.save('data/x_train.npy', x_train)
+np.save('data/x_cv.npy', x_cv)
+np.save('data/x_test.npy', x_test)
+np.save('data/y_train.npy', y_train)
+np.save('data/y_cv.npy', y_cv)
+np.save('data/y_test.npy', y_test)
