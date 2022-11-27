@@ -2,6 +2,7 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
+import os
 import matplotlib.pyplot as plt
 
 OUTPUT_COLUMN = "WorkLifeBalance"
@@ -68,9 +69,9 @@ print(y_test.values.shape)
 # columns_in_order = np.delete(columns_in_order, np.where(columns_in_order == output_column))
 # input = df[columns_in_order].values
 
-np.save('data/x_train.npy', x_train)
-np.save('data/x_cv.npy', x_cv)
-np.save('data/x_test.npy', x_test)
-np.save('data/y_train.npy', y_train)
-np.save('data/y_cv.npy', y_cv)
-np.save('data/y_test.npy', y_test)
+np.save(os.path.join('data', 'x_train.npy'), x_train)
+np.save(os.path.join('data', 'x_cv.npy'), x_cv)
+np.save(os.path.join('data', 'x_test.npy'), x_test)
+np.save(os.path.join('data', 'y_train.npy'), y_train)
+np.save(os.path.join('data', 'y_cv.npy'), y_cv)
+np.save(os.path.join('data', 'y_test.npy'), y_test)
