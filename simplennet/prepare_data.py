@@ -6,9 +6,10 @@ import os
 import matplotlib.pyplot as plt
 
 OUTPUT_COLUMN = "WorkLifeBalance"
-COLUMNS = ["WorkLifeBalance", "Department", "Gender", "JobLevel", "JobRole", "JobSatisfaction", "MonthlyIncome",
-           "OverTime", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion"]
-data = pd.read_csv('data.csv', usecols=COLUMNS)
+# COLUMNS = ["WorkLifeBalance", "Department", "Gender", "JobLevel", "JobRole", "JobSatisfaction", "MonthlyIncome",
+#            "OverTime", "YearsAtCompany", "YearsInCurrentRole", "YearsSinceLastPromotion", "Education", "DistanceFromHome", "TotalWorkingYears"]
+# data = pd.read_csv('data.csv', usecols=COLUMNS)
+data = pd.read_csv('data.csv')
 columns_in_order = data.columns.values
 
 print('Discretizar valores de output a 0 - 1...')
@@ -64,9 +65,9 @@ x_test, x_cv, y_test, y_cv = train_test_split(
 print(x_test.values.shape)
 print(y_test.values.shape)
 
-# output = np.array([[x] for x in df.loc[:,output_column].to_list()])
-# df = df.drop(output_column, axis=1)
-# columns_in_order = np.delete(columns_in_order, np.where(columns_in_order == output_column))
+# output = np.array([[x] for x in df.loc[:,OUTPUT_COLUMN].to_list()])
+# df = df.drop(OUTPUT_COLUMN, axis=1)
+# columns_in_order = np.delete(columns_in_order, np.where(columns_in_order == OUTPUT_COLUMN))
 # input = df[columns_in_order].values
 
 np.save(os.path.join('data', 'x_train.npy'), x_train)

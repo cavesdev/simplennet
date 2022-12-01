@@ -4,6 +4,7 @@ import numpy as np
 import subprocess
 import os
 import sys
+from sklearn.neural_network import MLPClassifier
 
 if not os.path.exists(os.path.join('.', 'data')):
     os.mkdir(os.path.join('.', 'data'))
@@ -22,8 +23,33 @@ y_test = np.load(os.path.join('data', 'y_test.npy'))
 
 NN = NeuralNetwork()
 
-NN.train(x_train, y_train, 10)
-input_pred = np.array([1,1,2,2,3,4404,0,4,3,1])
+NN.train(x_train, y_train, 1)
+print(x_test[0])
+print(x_test[0].shape)
+print(y_test[0])
+input_pred = np.array(x_test[0])
 print(NN.predict(input_pred))
 NN.view_error_development()
-# NN.test_evaluation(input_test_scaled, output_test_scaled)
+NN.test_evaluation(x_test, y_test)
+
+clf = MLPClassifier(
+    activation='relu',
+    solver='sgd',
+    alpha=1e-5,
+    hidden_layer_sizes=(34),
+    random_state=1,
+    max_iter=5000
+)
+clf.fit(x_train, y_train)
+
+print( 'accuracy: ',clf.score( x_test, y_test ))
+
+pred = clf.predict(x_test)
+print(pred)
+print(y_test)
+sum = 0
+for i in range(len(pred)):
+    if pred[i] == y_test[i]:
+        sum += 1
+
+print(f'{sum} / {len(pred)}')
